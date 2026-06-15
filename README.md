@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Enterprise ServiceDesk Pro
 
-## Getting Started
+Enterprise ServiceDesk Pro is a full-stack helpdesk and ticket management system built for managing internal company support requests. It allows employees to create tickets, support agents to manage assigned issues, and admins/managers to monitor users, departments, categories, notifications, and analytics.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js
+- TypeScript
+- Tailwind CSS
+- PostgreSQL
+- Prisma ORM
+- JWT Authentication
+- Zod Validation
+- Recharts
+- Neon Database
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Main Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Authentication
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Login system using JWT cookies
+- Protected dashboard routes
+- Role-based access control
 
-## Learn More
+### User Roles
 
-To learn more about Next.js, take a look at the following resources:
+- Admin
+- Manager
+- Support Agent
+- Employee
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Ticket Management
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Create support tickets
+- View all tickets
+- View ticket detail page
+- Update ticket status
+- Add ticket comments
+- Activity timeline for ticket actions
+- Ticket assignment to support agent
+- Priority and status badges
 
-## Deploy on Vercel
+### Search and Filters
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Search by ticket title or description
+- Filter by status
+- Filter by priority
+- Filter by category
+- Filter by department
+- Filter by assigned agent
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Admin Pages
+
+- User management
+- Department management
+- Category management
+- Notification center
+
+### Reports and Analytics
+
+- Tickets by status
+- Tickets by priority
+- Tickets by category
+- Agent performance report
+- Live database-based analytics
+
+## Demo Accounts
+
+All demo users use the same password:
+
+```txt
+Password@123

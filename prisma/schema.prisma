@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  EMPLOYEE
+  AGENT
+  MANAGER
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  REOPENED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityType {
+  CREATED
+  ASSIGNED
+  STATUS_CHANGED
+  COMMENT_ADDED
+  PRIORITY_CHANGED
+  RESOLVED
+  CLOSED
+  REOPENED
+  ESCALATED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(EMPLOYEE)
+  departmentId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department      Department? @relation(fields: [departmentId], references: [id])
+  createdTickets  Ticket[]    @relation("CreatedTickets")
+  assignedTickets Ticket[]    @relation("AssignedTickets")
+  comments        TicketComment[]
+  activityLogs    TicketActivityLog[]
+  notifications   Notification[]
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users   User[]
+  tickets Ticket[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tickets Ticket[]
+}
+
+model Ticket {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  dueDate     DateTime?
+  resolvedAt  DateTime?
+  closedAt    DateTime?
+  isEscalated Boolean        @default(false)
+
+  createdById  String
+  assignedToId String?
+  categoryId   String
+  departmentId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy  User        @relation("CreatedTickets", fields: [createdById], references: [id])
+  assignedTo User?       @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  category   Category    @relation(fields: [categoryId], references: [id])
+  department Department? @relation(fields: [departmentId], references: [id])
+
+  comments     TicketComment[]
+  attachments  TicketAttachment[]
+  activityLogs TicketActivityLog[]
+}
+
+model TicketComment {
+  id        String   @id @default(cuid())
+  message   String
+  ticketId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model TicketAttachment {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileUrl   String
+  fileType  String
+  ticketId  String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model TicketActivityLog {
+  id        String       @id @default(cuid())
+  type      ActivityType
+  message   String
+  ticketId  String
+  userId    String?
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
