@@ -15,66 +15,68 @@ export default async function ReportsPage() {
     redirect("/dashboard");
   }
 
-  const [
-    totalTickets,
-    openTickets,
-    inProgressTickets,
-    resolvedTickets,
-    closedTickets,
-    urgentTickets,
-    statusGroups,
-    priorityGroups,
-    categories,
-    agents,
-  ] = await Promise.all([
-    prisma.ticket.count(),
-    prisma.ticket.count({ where: { status: "OPEN" } }),
-    prisma.ticket.count({ where: { status: "IN_PROGRESS" } }),
-    prisma.ticket.count({ where: { status: "RESOLVED" } }),
-    prisma.ticket.count({ where: { status: "CLOSED" } }),
-    prisma.ticket.count({ where: { priority: "URGENT" } }),
+  const totalTickets = await prisma.ticket.count();
 
-    prisma.ticket.groupBy({
-      by: ["status"],
-      _count: {
-        id: true,
-      },
-    }),
+  const openTickets = await prisma.ticket.count({
+    where: { status: "OPEN" },
+  });
 
-    prisma.ticket.groupBy({
-      by: ["priority"],
-      _count: {
-        id: true,
-      },
-    }),
+  const inProgressTickets = await prisma.ticket.count({
+    where: { status: "IN_PROGRESS" },
+  });
 
-    prisma.category.findMany({
-      orderBy: {
-        name: "asc",
-      },
-      include: {
-        tickets: true,
-      },
-    }),
+  const resolvedTickets = await prisma.ticket.count({
+    where: { status: "RESOLVED" },
+  });
 
-    prisma.user.findMany({
-      where: {
-        role: "AGENT",
-      },
-      select: {
-        id: true,
-        name: true,
-        assignedTickets: {
-          select: {
-            status: true,
-          },
+  const closedTickets = await prisma.ticket.count({
+    where: { status: "CLOSED" },
+  });
+
+  const urgentTickets = await prisma.ticket.count({
+    where: { priority: "URGENT" },
+  });
+
+  const statusGroups = await prisma.ticket.groupBy({
+    by: ["status"],
+    _count: {
+      id: true,
+    },
+  });
+
+  const priorityGroups = await prisma.ticket.groupBy({
+    by: ["priority"],
+    _count: {
+      id: true,
+    },
+  });
+
+  const categories = await prisma.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    include: {
+      tickets: true,
+    },
+  });
+
+  const agents = await prisma.user.findMany({
+    where: {
+      role: "AGENT",
+    },
+    select: {
+      id: true,
+      name: true,
+      assignedTickets: {
+        select: {
+          status: true,
         },
       },
-      orderBy: {
-        name: "asc",
-      },
-    }),
-  ]);
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
 
   const statusData = statusGroups.map((item) => ({
     name: item.status.replaceAll("_", " "),
